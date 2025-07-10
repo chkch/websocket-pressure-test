@@ -3,17 +3,13 @@
 // +-------------------------------------------------------------------------
 // | webSocket并发压力测试
 // +-------------------------------------------------------------------------
-// | Copyright (c) 2017~2018 http://blog.php127.com All rights reserved.
-// +-------------------------------------------------------------------------
-// | Author: 读心印 <aa24615@qq.com>
-// +-------------------------------------------------------------------------
 
 const clc = require('cli-color');
 const WebSocketClient = require('websocket').client;
 const fs = require('fs');
 let count = 0;
 let failed = 0;
-const error = 0;
+let errorCount = 0; 
 let close = 0;
 
 // 增加接收訊息量的計數器
@@ -56,7 +52,7 @@ function ws(i) {
         count++;
         state();
         connection.on('error', function (error) {
-            error++;
+            errorCount++;
             state();
         });
         connection.on('close', function () {
@@ -86,7 +82,13 @@ function ws(i) {
             function sendMyMessage() {
                 // 在有連線的情況下才送出訊息
                 if (connection.connected) {
-                    connection.send(JSON.stringify(customJSON));
+                    if (Array.isArray(customJSON)) {
+                        customJSON.forEach((item) => {
+                            connection.send(JSON.stringify(item));
+                        });
+                    } else {
+                        connection.send(JSON.stringify(customJSON));
+                    }
                 } else {
                     //若連線尚未建立，等待一秒後再送一次
                     setTimeout(sendMyMessage, 1000);
@@ -99,21 +101,37 @@ function ws(i) {
     client.connect(url);
 }
 
+let lastPrintTime = Date.now();
+const printInterval = 1000; // 每秒打印一次连接信息
+
 function state() {
-    process.stdout.write(clc.move.top);
-    console.debug(
-        clc.green('连接成功:') + clc.white(count),
-        clc.yellow('连接失败:') + clc.white(failed),
-        clc.magenta('连接错误:') + clc.white(error),
-        clc.yellow('连接关闭:') + clc.white(close),
-        clc.magenta('已接收字节:') + clc.white(byteReceived < 1024 ? byteReceived + 'B' : (byteReceived / 1024).toFixed(2) + 'KB'),
-        clc.red('已接收訊息:') + clc.white(messageReceived)
-    );
+    const now = Date.now();
+    if (now - lastPrintTime >= printInterval) {
+        process.stdout.write(clc.move.top);
+        console.debug(
+            clc.green('连接成功:') + clc.white(count),
+            clc.yellow('连接失败:') + clc.white(failed),
+            clc.magenta('连接错误:') + clc.white(errorCount),
+            clc.yellow('连接关闭:') + clc.white(close),
+            clc.magenta('已接收字节:') + clc.white(byteReceived < 1024 ? byteReceived + 'B' : (byteReceived / 1024).toFixed(2) + 'KB'),
+            clc.red('已接收訊息:') + clc.white(messageReceived)
+        );
+        lastPrintTime = now;
+    }
 }
 
 function closeAll(){
     for (let i = 1; i <= c; i++) {
-        connectList[i].abort();
+        if (connectList[i]) {
+            connectList[i].abort();
+        }
     }
-    console.debug( clc.green('结束') );
+    // console.debug( clc.green('结束') );
+    process.exit(0);
 }
+
+// 捕获 SIGINT 信号（Ctrl + C）
+process.on('SIGINT', () => {
+    // console.log('\n收到 Ctrl + C 信号，正在关闭所有连接...');
+    closeAll();
+});
