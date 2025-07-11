@@ -13,7 +13,6 @@ let errorCount = 0;
 let close = 0;
 
 // 增加接收訊息量的計數器
-let byteReceived = 0;
 let messageReceived = 0;
 
 const url = process.argv[2] || 'ws://127.0.0.1:9502';
@@ -60,9 +59,6 @@ function ws(i) {
             state();
         });
         connection.on('message', function (message) {
-            // 轉成字串，計算接收到的訊息大小
-            let temp_size = JSON.stringify(message).length;
-            byteReceived += temp_size;
             messageReceived++;
             state();
         });
@@ -113,7 +109,6 @@ function state() {
             clc.yellow('连接失败:') + clc.white(failed),
             clc.magenta('连接错误:') + clc.white(errorCount),
             clc.yellow('连接关闭:') + clc.white(close),
-            clc.magenta('已接收字节:') + clc.white(byteReceived < 1024 ? byteReceived + 'B' : (byteReceived / 1024).toFixed(2) + 'KB'),
             clc.red('已接收訊息:') + clc.white(messageReceived)
         );
         lastPrintTime = now;
