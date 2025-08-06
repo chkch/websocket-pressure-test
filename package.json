@@ -8,7 +8,7 @@
     "fix": "./node_modules/.bin/eslint --ext .js,.html src/ --fix"
   },
   "bin": {
-    "websocket-pressure-test": "./src/websocket-pressure-test.js",
+    "ws-perf-test": "./src/websocket-pressure-test.js",
     "websocket-server": "./src/websocket-server.js"
   },
   "repository": {
