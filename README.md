@@ -1,11 +1,11 @@
-# websocket-pressure-test
+# ws-perf-test
 
 nodejs版的websocket压力测试工具
 
 ### 安装
 
 ```shell
-npm i websocket-pressure-test
+npm i ws-perf-test
 ```
 
 ### 服务
@@ -20,10 +20,10 @@ npm i websocket-pressure-test
 
 ### 运行
 
-./node_modules/.bin/websocket-pressure-test 地址 并发数 发送内容.json[可选]
+./node_modules/.bin/ws-perf-test 地址 并发数 发送内容.json[可选]
 
 ```shell
-./node_modules/.bin/websocket-pressure-test ws://127.0.0.1:8080 10000 ./node_modules/websocket-pressure-test/package.json
+./node_modules/.bin/ws-perf-test ws://127.0.0.1:8080 10000 ./node_modules/ws-perf-test/package.json
 
 ```
 
@@ -32,7 +32,7 @@ npm i websocket-pressure-test
 如果您是用的是win命令行:
 
 ```shell
-node .\node_modules\websocket-pressure-test\src\websocket-pressure-test.js ws://127.0.0.1:8080 10000
+node .\node_modules\ws-perf-test\src\ws-perf-test.js ws://127.0.0.1:8080 10000
 ```
 
 
