@@ -33,6 +33,6 @@
   "dependencies": {
     "cli-color": "^2.0.0",
     "websocket": "^1.0.33",
-    "ws": "^8.2.3"
+    "ws": "^8.18.3"
   }
 }
