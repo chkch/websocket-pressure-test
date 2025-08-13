@@ -5,42 +5,40 @@ nodejs版的websocket压力测试工具
 ### 安装
 
 ```shell
-npm i ws-perf-test
+- 克隆代码仓库
+    git clone https://github.com/chkch/websocket-pressure-test.git 
+- 将本地项目全局安装到系统中
+    npm uninstall ws-perf-test -g && npm install && npm install -g . 
+- 压测使用
+    ws-perf-test 地址 并发数 发送内容.json
+    json文件格式：{} 或 [{},{}]
 ```
+
 
 ### 服务
 
 提供一个简单的本地websocket服务 地址为 `ws://127.0.0.1:8080`  
 
-
 ```shell
-./node_modules/.bin/websocket-server
+websocket-server
 ```
 
 
 ### 运行
 
-./node_modules/.bin/ws-perf-test 地址 并发数 发送内容.json[可选]
-
 ```shell
-./node_modules/.bin/ws-perf-test ws://127.0.0.1:8080 10000 ./node_modules/ws-perf-test/package.json
-
+# 参数说明：
+# node ws_stress.js [URL] [总连接数] [批次连接数] [批次间隔(ms)] [自定义JSON文件路径]
+node ws_stress.js ws://127.0.0.1:9502 10000 500 1000 ./msg.json
 ```
+
+•	10000 → 总连接数
+•	500 → 每批连接数
+•	1000 → 每批间隔（毫秒）
+•	./msg.json → 发送的自定义消息文件（可选）
 
 ![](./test.png)
 
-如果您是用的是win命令行:
-
-```shell
-node .\node_modules\ws-perf-test\src\ws-perf-test.js ws://127.0.0.1:8080 10000
-```
-
-
-### 参与贡献
-
-1. fork 当前库到你的名下
-2. 在你的本地修改完成审阅过后提交到你的仓库
-3. 提交 PR 并描述你的修改，等待合并
 
 ### License
 
