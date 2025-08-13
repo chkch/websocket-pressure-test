@@ -30,12 +30,12 @@ websocket-server
 # 参数说明：
 # node ws_stress.js [URL] [总连接数] [批次连接数] [批次间隔(ms)] [自定义JSON文件路径]
 node ws_stress.js ws://127.0.0.1:9502 10000 500 1000 ./msg.json
-```
 
 •	10000 → 总连接数
 •	500 → 每批连接数
 •	1000 → 每批间隔（毫秒）
 •	./msg.json → 发送的自定义消息文件（可选）
+```
 
 ![](./test.png)
 
