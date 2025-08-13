@@ -8,7 +8,8 @@ nodejs版的websocket压力测试工具
 - 克隆代码仓库
     git clone https://github.com/chkch/websocket-pressure-test.git 
 - 将本地项目全局安装到系统中
-    npm uninstall ws-perf-test -g && npm install && npm install -g . 
+    npm install && npm install . -g 
+    chmod +x /usr/local/bin/ws-perf-test 
 - 压测使用
     ws-perf-test 地址 并发数 发送内容.json
     json文件格式：{} 或 [{},{}]
