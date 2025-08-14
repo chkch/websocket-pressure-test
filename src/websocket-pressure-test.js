@@ -5,7 +5,7 @@ const fs = require('fs');
 
 let count = 0, failed = 0, errorCount = 0, close = 0, messageReceived = 0;
 
-// 参数
+// 命令行参数
 const url = process.argv[2] || 'ws://127.0.0.1:9502';
 const totalConnections = parseInt(process.argv[3] || 10000);
 const batchSize = parseInt(process.argv[4] || 500);
@@ -21,6 +21,7 @@ try {
         customData = false;
     }
 } catch {
+    console.error(clc.red(`无法解析 ${customData}，将使用默认模式`));
     customData = false;
 }
 
@@ -29,13 +30,16 @@ let connectionsCreated = 0;
 
 function createConnection() {
     const ws = new WebSocket(url);
+
     let sendTimer = null;
+    let pingTimer = null;
 
     ws.on('open', () => {
         count++;
         activeConnections++;
         state();
 
+        // 消息发送定时器
         if (!customData) {
             sendTimer = setInterval(() => {
                 if (ws.readyState === WebSocket.OPEN) {
@@ -55,11 +59,22 @@ function createConnection() {
                 }
             }, 1000);
         }
+
+        // 每 20 秒发送 ping
+        pingTimer = setInterval(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.ping();
+            }
+        }, 20000);
     });
 
     ws.on('message', () => {
         messageReceived++;
         state();
+    });
+
+    ws.on('pong', () => {
+        // 可以在这里做心跳响应统计
     });
 
     ws.on('error', () => {
@@ -72,6 +87,7 @@ function createConnection() {
         activeConnections--;
         state();
         if (sendTimer) clearInterval(sendTimer);
+        if (pingTimer) clearInterval(pingTimer);
     });
 
     ws.on('unexpected-response', () => {
@@ -119,5 +135,5 @@ process.on('SIGINT', () => {
     process.exit(0);
 });
 
-// 启动连接
+// 启动批量连接
 connectBatch();
