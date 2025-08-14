@@ -74,11 +74,12 @@ function createConnection() {
     });
 
     ws.on('pong', () => {
-        // 可以在这里做心跳响应统计
+        // 心跳响应可统计
     });
 
-    ws.on('error', () => {
+    ws.on('error', (err) => {
         errorCount++;
+        console.error(clc.red(`[连接错误] ${err.message}`));
         state();
     });
 
@@ -129,6 +130,25 @@ function state() {
         lastPrintTime = now;
     }
 }
+
+// ---------- 异常捕获 ----------
+process.on('uncaughtException', (err) => {
+    console.error(clc.redBright('\n[未捕获异常]'), err);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error(clc.redBright('\n[未处理的 Promise 拒绝]'), reason);
+    process.exit(1);
+});
+
+// ---------- 程序退出事件 ----------
+process.on('exit', (code) => {
+    console.log(clc.yellow(`\n程序退出，退出码: ${code}`));
+    console.log(clc.green('最终统计:'),
+        `连接成功=${count}, 连接失败=${failed}, 错误=${errorCount}, 关闭=${close}, 收到消息=${messageReceived}`
+    );
+});
 
 process.on('SIGINT', () => {
     console.log("\n测试结束，正在关闭所有连接...");
